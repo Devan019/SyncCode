@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import { IconUpload } from "@tabler/icons-react";
 import { useDropzone } from "react-dropzone";
 
+const allowedExtensions = [
+  ".js", ".ts", ".py", ".java", ".c", ".cpp"
+];
+
 const mainVariant = {
   initial: {
     x: 0,
@@ -30,10 +34,22 @@ export const FileUpload = ({
 }) => {
   const [files, setFiles] = useState([]);
   const fileInputRef = useRef(null);
+  const [error, setError] = useState(""); 
 
   const handleFileChange = (newFiles) => {
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onChange && onChange(newFiles);
+    if (newFiles.length === 0) return;
+
+    const file = newFiles[0];
+    const fileExt = "." + file.name.split(".").pop().toLowerCase();
+
+    if (!allowedExtensions.includes(fileExt)) {
+      setError(`Invalid file type! Allowed: ${allowedExtensions.join(", ")}`);
+      return;
+    }
+
+    setFiles([file]);
+    setError(""); 
+    onChange && onChange([file]);
   };
 
   const handleClick = () => {
@@ -70,10 +86,15 @@ export const FileUpload = ({
             className="relative z-20 font-sans font-bold text-neutral-700 dark:text-neutral-300 text-base">
             Upload file
           </p>
+          
           <p
             className="relative z-20 font-sans font-normal text-neutral-400 dark:text-neutral-400 text-base mt-2">
             Drag or drop your files here or click to upload
           </p>
+            {/* Show Error Message */}
+            {error && (
+            <p className="text-red-500 text-sm mt-2">{error}</p>
+          )}
           <div className="relative w-full mt-10 max-w-xl mx-auto">
             {files.length > 0 &&
               files.map((file, idx) => (

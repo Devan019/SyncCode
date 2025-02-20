@@ -1,6 +1,6 @@
 import React from 'react'
-import { Navbar } from './Navbar'
-import { HeroHighlightDemo } from './Hero'
+import { Navbar } from '../Components/Navbar'
+import { HeroHighlightDemo } from '../Components/Hero'
 
 const Home = () => {
   return (

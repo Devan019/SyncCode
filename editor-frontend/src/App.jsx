@@ -1,14 +1,15 @@
 import React from 'react'
-import CodeEditor from './Components/Editer'
-import Home from './Components/Home'
+import Editor from './pages/Editer'
 import './app.css'
+import {Routes, Route} from 'react-router-dom'
+import Home from './pages/Home'
 
 const App = () => {
   return (
-    <>
-    {/* <CodeEditor/> */}
-    <Home/>
-    </>
+    <Routes>
+      <Route path='' element={<Home />} />
+      <Route path='/editor' element={<Editor />} />
+    </Routes>
   )
 }
 
