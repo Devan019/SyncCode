@@ -1,6 +1,7 @@
-package com.liveCollab.Editor_backend.Models;
+package com.live_editor.editor.Models;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,21 +14,37 @@ public class File {
 
     private String code;
     private String filename;
+    private String language;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonBackReference
+    private User user;
 
     public File() {
     }
 
-    public File(String code, String filename) {
-        this.code = code;
+    public File(User user, String language, String filename, String code) {
+        this.user = user;
+        this.language = language;
         this.filename = filename;
+        this.code = code;
     }
 
     public String getCode() {
         return code;
     }
 
+    public  String getLanguage(){
+        return this.language;
+    }
+
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public void setLanguage(String language){
+        this.language = language;
     }
 
     public String getFilename() {
@@ -46,6 +63,14 @@ public class File {
         this.id = id;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
     @Override
     public String toString() {
         return "File{" +
@@ -55,3 +80,4 @@ public class File {
                 '}';
     }
 }
+

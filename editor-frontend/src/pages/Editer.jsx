@@ -12,8 +12,9 @@ import { Navbar } from "../Components/Navbar";
 import Sidebar from "../Components/Sidebar";
 import Workspace from "../Components/Workspace";
 import ToolTipbar from '../Components/ToolTipbar'
-import getFileExtension from "../../public/getFileExtension";
-import getLanguageFromExtension from "../../public/getLanguage";
+import getFileExtension from "/public/getFileExtension";
+import getLanguageFromExtension from "/public/getLanguage";
+import axios from "axios";
 
 const languageCompartment = new Compartment();
 
@@ -26,15 +27,17 @@ const Editor = () => {
   const [code, setCode] = useState("");
   const [output, setOutput] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [loading, setloading] = useState("hidden")
 
   const codeSetToEditor = (intialCode) => {
     if (!editorRef.current) return;
-  
-    // Destroy the previous editor instance if it exists
+
+
+
     if (editor) {
       editor.destroy();
     }
-  
+
     let languageExtension;
     switch (language) {
       case "javascript":
@@ -49,12 +52,13 @@ const Editor = () => {
       case "cpp":
         languageExtension = cpp();
         break;
-      default:
-        languageExtension = javascript();
+      // default:
+      //   languageExtension = javascript();
     }
-  
+    console.log(languageExtension)
+
     const startState = EditorState.create({
-      doc: intialCode, // Load new code
+      doc: intialCode,
       extensions: [
         basicSetup,
         autocompletion(),
@@ -62,41 +66,42 @@ const Editor = () => {
         languageCompartment.of(languageExtension),
       ],
     });
-  
+
     const newView = new EditorView({
       state: startState,
       parent: editorRef.current,
     });
-  
-    setEditor(newView); // Store the new editor instance
+
+    setEditor(newView);
   };
-  
+
 
   const handleFileUpload = (files) => {
     const file = files[0];
     if (file) {
       let fileName = file.name;
       const fileExtension = fileName.split('.').pop();
-      
+
       if (getLanguageFromExtension(fileExtension) === "Unknown") return;
-  
+
       setLanguage(getLanguageFromExtension(fileExtension));
 
-      fileName = fileName.replace(/\.[^.]+$/, ""); 
+      fileName = fileName.replace(/\.[^.]+$/, "");
+      setLanguage((getLanguageFromExtension(fileExtension)).toLowerCase());
       setFilename(fileName);
-  
+
       const fileReader = new FileReader();
       fileReader.onload = function (evt) {
         codeSetToEditor(evt.target.result);
       };
       fileReader.readAsText(file);
-  
-      console.log(file);
+
     }
   };
-  
 
-  function submitHandler() {
+
+  function runCode() {
+    setloading("")
     if (!editor) {
       console.error("Editor is not initialized yet.");
       return;
@@ -105,28 +110,22 @@ const Editor = () => {
     setCode(editor.state.doc.toString());
 
     const obj = {
-      filename: filename + getFileExtension(language), // ✅ Set filename with extension
+      filename: filename + getFileExtension(language),
       language: language,
       code: editor.state.doc.toString(),
     };
 
-    fetch(import.meta.env.VITE_COMPILER_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(obj),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log(data);
-        setOutput(data);
+    axios.post(import.meta.env.VITE_COMPILER_URL, obj)
+      .then((response) => {
+        setOutput(response.data);
+        setloading("hidden")
       })
-      .catch((error) => console.error("Error:", error));
+      .catch((error) => { console.error("Error:", error); setloading("hidden") });
+
   }
 
   useEffect(() => {
-   codeSetToEditor("")
+    codeSetToEditor("")
   }, [language]);
 
   function download() {
@@ -143,35 +142,61 @@ const Editor = () => {
     document.body.removeChild(a);
   }
 
+  function saveFile() {
+
+    const fileObj = {
+      "id" : 1,
+      "username": "devan",
+      "email_id": "23sdnja@qwdl.com",
+      "password": "1234",
+      "files": [
+        {
+          "code": code,
+          "filename": filename,
+          "language": language
+        }
+      ]
+    }
+
+    const api = import.meta.env.VITE_API_URL + "/users"
+    axios.post(api, fileObj)
+      .then((response) => {
+        console.log(response.data);
+      })
+      .catch((error) => { console.error("Error:", error); });
+  }
+
   return (
 
 
-    <div className="overflow-hidden">
+    <div className=" overflow-hidden min-h-screen bg-[#121212]">
       <div className=" flex flex-row justify-between">
         <Navbar />
         {/* Sidebar */}
         <Sidebar
-        sidebarOpen={sidebarOpen}
-        setSidebarOpen={setSidebarOpen}
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
         />
 
         {/* Editor */}
         <Workspace
-        language={language}
-        setLanguage={setLanguage}
-        submitHandler={submitHandler}
-        output={output}
-        editorRef={editorRef}
-        download={download}
+          language={language}
+          setLanguage={setLanguage}
+          submitHandler={runCode}
+          output={output}
+          editorRef={editorRef}
+          download={download}
+          loading={loading}
+          saveFile = {saveFile}
         />
 
         {/* sidebar2 */}
         <ToolTipbar
-        language={language}
-        handleFileUpload={handleFileUpload}
-        filename={filename}
-        setFilename={setFilename}
-        getFileExtension={getFileExtension}
+          language={language}
+          handleFileUpload={handleFileUpload}
+          filename={filename}
+          setFilename={setFilename}
+          getFileExtension={getFileExtension}
         />
       </div>
     </div>

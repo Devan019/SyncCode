@@ -8,11 +8,11 @@
 		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.liveCollab</groupId>
-	<artifactId>Editor-backend</artifactId>
+	<groupId>com.editor-backend</groupId>
+	<artifactId>Live-Editor-backend</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>Editor-backend</name>
-	<description>Live collabration of Editor</description>
+	<name>Live-Editor-backend</name>
+	<description>Backend of live editor</description>
 	<url/>
 	<licenses>
 		<license/>
@@ -36,15 +36,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-websocket</artifactId>
 		</dependency>
 
 		<dependency>
@@ -63,11 +55,13 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-websocket -->
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-test</artifactId>
-			<scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-websocket</artifactId>
+			<version>3.4.3</version>
 		</dependency>
+
 	</dependencies>
 
 	<build>

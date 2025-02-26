@@ -1,15 +1,15 @@
-package com.liveCollab.Editor_backend.Controllers;
+package com.live_editor.editor.Controllers;
 
-
-import com.liveCollab.Editor_backend.Models.File;
-import com.liveCollab.Editor_backend.Repos.FileRepo;
+import com.live_editor.editor.Models.File;
+import com.live_editor.editor.Repos.FileRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping(name = "/files")
+@RequestMapping("/files")
+@CrossOrigin(value = "*")
 public class FileController {
     @Autowired
     private FileRepo fileRepo;
@@ -25,3 +25,4 @@ public class FileController {
     }
 
 }
+

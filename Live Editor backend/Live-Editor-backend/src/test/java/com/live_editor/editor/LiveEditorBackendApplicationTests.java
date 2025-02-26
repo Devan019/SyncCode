@@ -1,10 +1,10 @@
-package com.liveCollab.Editor_backend;
+package com.live_editor.editor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class EditorBackendApplicationTests {
+class LiveEditorBackendApplicationTests {
 
 	@Test
 	void contextLoads() {
